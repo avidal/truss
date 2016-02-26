@@ -1,0 +1,5 @@
+# Stores example repositories during development
+repositories
+
+# Configuration file during development
+truss.toml
