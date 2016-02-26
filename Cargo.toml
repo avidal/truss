@@ -1,0 +1,9 @@
+[package]
+name = "truss"
+version = "0.1.0"
+authors = ["Alex Vidal <alex.vidal@gmail.com>"]
+
+[dependencies]
+git2 = "*"
+iron = "*"
+toml = "*"

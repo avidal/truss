@@ -3,3 +3,15 @@ repositories
 
 # Configuration file during development
 truss.toml
+
+# Compiled files
+*.o
+*.so
+*.rlib
+*.dll
+
+# Created by cargo
+/target/
+
+# No need for Cargo.lock when making executables
+Cargo.lock
