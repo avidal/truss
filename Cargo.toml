@@ -3,7 +3,13 @@ name = "truss"
 version = "0.1.0"
 authors = ["Alex Vidal <alex.vidal@gmail.com>"]
 
+[lib]
+name = "truss"
+path = "src/truss/lib.rs"
+
 [dependencies]
 git2 = "*"
 iron = "*"
 toml = "*"
+clap = "*"
+clippy = "*"
