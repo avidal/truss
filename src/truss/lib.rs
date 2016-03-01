@@ -4,5 +4,3 @@
 #![cfg_attr(feature = "clippy", deny(warnings))]
 
 extern crate toml;
-
-mod config;
