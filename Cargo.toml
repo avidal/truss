@@ -7,6 +7,10 @@ authors = ["Alex Vidal <alex.vidal@gmail.com>"]
 name = "truss"
 path = "src/truss/lib.rs"
 
+[[bin]]
+name = "truss"
+path = "src/bin/truss.rs"
+
 [dependencies]
 git2 = "*"
 iron = "*"
