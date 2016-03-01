@@ -3,7 +3,7 @@ use std::fs;
 use std::io::Read;
 use std::path;
 
-use cli::error::TrussCliError;
+use cli::error::{TrussCliError, ErrorKind};
 
 use toml;
 
@@ -24,6 +24,15 @@ pub fn read_file(filepath: &path::Path) -> Result<(), TrussCliError> {
     let mut parser = toml::Parser::new(&s);
     let parsed = match parser.parse() {
         Some(parsed) => parsed,
+        // wtf
+        None => return Err(TrussCliError { kind: ErrorKind::FileNotFound, detail: Some("what".to_owned()) }),
+    };
+
+    for (key, value) in &parsed {
+        println!("{}: {}", key, value);
+    }
+    /*
+     * this was in the None branch for parser.parse
         None => {
             for err in &parser.errors {
                 let (loline, locol) = parser.to_linecol(err.lo);
@@ -33,11 +42,7 @@ pub fn read_file(filepath: &path::Path) -> Result<(), TrussCliError> {
             }
             panic!("Error reading configuration file");
         }
-    };
-
-    for (key, value) in &parsed {
-        println!("{}: {}", key, value);
-    }
+    */
 
     /*
     Ok(Config {

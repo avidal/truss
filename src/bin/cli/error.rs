@@ -13,8 +13,8 @@ pub enum ErrorKind {
 
 #[derive(Debug)]
 pub struct TrussCliError {
-    kind: ErrorKind,
-    detail: Option<String>,
+    pub kind: ErrorKind,
+    pub detail: Option<String>,
 }
 
 impl error::Error for TrussCliError {
@@ -25,12 +25,6 @@ impl error::Error for TrussCliError {
             ErrorKind::IoError(_) => "an I/O error occurred",
         }
     }
-
-	/*
-    fn cause(&self) -> Option<&error::Error> {
-        self.cause.as_ref()
-    }
-	*/
 }
 
 impl fmt::Display for TrussCliError {
