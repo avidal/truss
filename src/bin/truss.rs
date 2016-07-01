@@ -5,6 +5,7 @@ extern crate truss;
 extern crate clap;
 extern crate git2;
 extern crate toml;
+extern crate glob;
 
 mod commands;
 mod cli;
@@ -23,5 +24,11 @@ fn main() {
     match config::read_file(path::Path::new("./truss.toml")) {
         Ok(_) => println!("Read configuration file"),
         Err(e) => println!("Error: {:?}", e),
+    }
+
+    let x = Some(1u8);
+    match x {
+        Some(y) => println!("{:?}", y),
+        _ => ()
     }
 }
