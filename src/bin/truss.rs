@@ -1,6 +1,3 @@
-#![feature(plugin)]
-#![plugin(clippy)]
-
 use std::path;
 
 extern crate truss;
@@ -23,5 +20,8 @@ fn main() {
         commands::ls::run();
     }
 
-    config::read_file(path::Path::new("./truss.toml"));
+    match config::read_file(path::Path::new("./truss.toml")) {
+        Ok(_) => println!("Read configuration file"),
+        Err(e) => println!("Error: {:?}", e),
+    }
 }
