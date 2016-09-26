@@ -12,8 +12,8 @@ name = "truss"
 path = "src/bin/truss.rs"
 
 [dependencies]
-git2 = "*"
-iron = "*"
-toml = "*"
+clippy = "*"
+toml = { version = "*", default-features = false, features = ["serde"] }
 clap = "*"
-glob = "*"
+serde= "*"
+serde_macros = "*"

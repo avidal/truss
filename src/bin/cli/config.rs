@@ -2,64 +2,68 @@ use std::env;
 use std::fs;
 use std::io::Read;
 use std::path;
+use std::collections::BTreeMap;
 
 use cli::error::{TrussCliError, ErrorKind};
 
+use toml::{Parser, Value, Decoder};
 use toml;
 
-#[derive(Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Show)]
 pub struct Config {
-    pub listen: String,
-    pub repository_root: path::PathBuf,
-    pub asset_root: path::PathBuf,
-    pub template_root: path::PathBuf
+    pub bind: String,
+    pub port: u16,
+
+    pub admins: Vec<String>,
+
+    pub users: Vec<UserConfig>,
 }
 
-pub fn read_file(filepath: &path::Path) -> Result<(), TrussCliError> {
+
+#[derive(Serialize, Deserialize, Debug, Show)]
+pub struct UserConfig {
+    pub username: String,
+    pub password: String,
+    
+    pub real: Option<String>,
+    pub nick: Option<String>,
+    pub nick2: Option<String>,
+    pub nick3: Option<String>,
+
+    pub servers: BTreeMap<String, ServerConfig>,
+}
+
+impl UserConfig {
+    fn best_nick(self) -> String {
+        self.nick.unwrap_or(self.nick2.unwrap_or(self.nick3.unwrap_or(self.username)))
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Show)]
+pub struct ServerConfig {
+    pub server: String,
+
+    pub real: Option<String>,
+    pub nick: Option<String>,
+    pub nick2: Option<String>,
+    pub nick3: Option<String>,
+}
+
+pub fn read_file(filepath: &path::Path) -> Result<Config, TrussCliError> {
     let configpath: &path::PathBuf = &env::current_dir().unwrap().join(filepath);
     let mut s = String::new();
     let mut f = try!(fs::File::open(configpath));
     try!(f.read_to_string(&mut s));
 
-    let mut parser = toml::Parser::new(&s);
-    let parsed = match parser.parse() {
-        Some(parsed) => parsed,
-        // wtf
-        None => return Err(TrussCliError { kind: ErrorKind::FileNotFound, detail: Some("what".to_owned()) }),
-    };
+    let mut parser = Parser::new(&s);
+    let toml = parser.parse();
 
-    for (key, value) in &parsed {
-        println!("{}: {}", key, value);
+    if toml.is_none() {
+        panic!("Could not parse config file");
     }
-    /*
-     * this was in the None branch for parser.parse
-        None => {
-            for err in &parser.errors {
-                let (loline, locol) = parser.to_linecol(err.lo);
-                let (hiline, hicol) = parser.to_linecol(err.hi);
-                println!("{}:{}:{}-{}:{} error: {}",
-                        configpath.to_str().unwrap(), loline, locol, hiline, hicol, err.desc);
-            }
-            panic!("Error reading configuration file");
-        }
-    */
 
-    /*
-    Ok(Config {
-        listen: parsed.get("listen"),
-        repository_root: parsed.get(
-        asset_root: *configpath,
-        template_root: *configpath
-    })
-    */
-
-    /*
-    Ok(Config {
-        listen: listen,
-        repository_root: repository_root,
-        asset_root: asset_root,
-        template_root: template_root
-    })
-    */
-    Ok(())
+    let config = Value::Table(toml.unwrap());
+    let c: Config = toml::decode(config).unwrap();
+    println!("{:?}", c);
+    Ok(c)
 }
